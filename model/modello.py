@@ -10,8 +10,8 @@ class Model:
         self._graph = nx.DiGraph()
         self._allGenes = DAO.get_all_genes()
         self._idMapGenes = {}
-        for g in self._allGenes:
-            self._idMapGenes[g.GeneID] = g
+        for g in self._allGenes:  # la chiave del gene è la coppia id-fuction
+            self._idMapGenes[(g.GeneID, g.Function)] = g
 
         self._bestPath = []
         self._bestScore = 0

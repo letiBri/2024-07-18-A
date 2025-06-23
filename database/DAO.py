@@ -73,7 +73,7 @@ class DAO():
             print("Connessione fallita")
         else:
             cursor = cnx.cursor(dictionary=True)
-            query = """select distinctrow g1.GeneID as Gene1, g1.Chromosome as Chrom1, g2.GeneID as Gene2, g2.Chromosome as Chrom2, i.Expression_Corr as peso
+            query = """select distinctrow g1.GeneID as Gene1, g1.Function as f1, g1.Chromosome as Chrom1, g2.GeneID as Gene2, g2.Function as f2, g2.Chromosome as Chrom2, i.Expression_Corr as peso
                         from genes g1, genes g2, classification c1, classification c2, interactions i 
                         where c1.Localization = c2.Localization 
                         and g1.GeneID = c1.GeneID and g2.GeneID = c2.GeneID and g1.GeneID <> g2.GeneID 
@@ -83,7 +83,7 @@ class DAO():
             cursor.execute(query, (cMin, cMax, cMin, cMax))
 
             for row in cursor:
-                result.append(Arco(idMap[row["Gene1"]], row["Chrom1"], idMap[row["Gene2"]], row["Chrom2"], row["peso"]))
+                result.append(Arco(idMap[(row["Gene1"], row["f1"])], row["Chrom1"], idMap[(row["Gene2"], row["f2"])], row["Chrom2"], row["peso"]))
 
             cursor.close()
             cnx.close()
