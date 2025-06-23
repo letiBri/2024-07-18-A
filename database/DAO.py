@@ -66,25 +66,24 @@ class DAO():
         return result
 
     @staticmethod
-    def getEdges(cMin, cMax):
+    def getEdges(cMin, cMax, idMap):
         cnx = DBConnect.get_connection()
         result = []
         if cnx is None:
             print("Connessione fallita")
         else:
             cursor = cnx.cursor(dictionary=True)
-            query = """SELECT c1.GeneID AS Gene1, g1.Chromosome AS Chrom1, c2.GeneID AS Gene2, g2.Chromosome AS Chrom2, i.Expression_Corr AS peso
-                        FROM classification c1, classification c2, genes g1, genes g2, interactions i
-                        WHERE c1.Localization = c2.Localization AND c1.GeneID != c2.GeneID 
-                            AND ((i.GeneID1 = c1.GeneID AND i.GeneID2 = c2.GeneID) OR (i.GeneID2 = c1.GeneID AND i.GeneID1 = c2.GeneID))
-                            AND g1.GeneID = c1.GeneID AND g2.GeneID = c2.GeneID
-                            AND g1.Chromosome >= %s AND g1.Chromosome <= %s  
-                            AND g2.Chromosome >= %s AND g2.Chromosome <= %s
-                            AND (g1.Chromosome < g2.Chromosome OR (g1.Chromosome = g2.Chromosome AND c1.GeneID < c2.GeneID))"""
+            query = """select distinctrow g1.GeneID as Gene1, g1.Chromosome as Chrom1, g2.GeneID as Gene2, g2.Chromosome as Chrom2, i.Expression_Corr as peso
+                        from genes g1, genes g2, classification c1, classification c2, interactions i 
+                        where c1.Localization = c2.Localization 
+                        and g1.GeneID = c1.GeneID and g2.GeneID = c2.GeneID and g1.GeneID <> g2.GeneID 
+                        and g1.Chromosome >= %s and g1.Chromosome <= %s and g2.Chromosome >= %s and g2.Chromosome <= %s
+                        and ((g1.GeneID = i.GeneID1 and g2.GeneID = i.GeneID2) or (g1.GeneID = i.GeneID2 and g2.GeneID = i.GeneID1))
+                        and g1.Chromosome <= g2.Chromosome """
             cursor.execute(query, (cMin, cMax, cMin, cMax))
 
             for row in cursor:
-                result.append(Arco(**row))
+                result.append(Arco(idMap[row["Gene1"]], row["Chrom1"], idMap[row["Gene2"]], row["Chrom2"], row["peso"]))
 
             cursor.close()
             cnx.close()

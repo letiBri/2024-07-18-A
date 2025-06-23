@@ -45,19 +45,18 @@ class View(ft.UserControl):
                                            tooltip="Crea il grafo",
                                            on_click=self._controller.handle_graph)
 
-        self.dd_localization = ft.Dropdown(label="Localization",
-                                      hint_text="Selezionare la Localization del gene", width=200)
-
-        self.btn_dettagli = ft.ElevatedButton(text="Dettagli",
-                                              tooltip="Stampa dettagli del grafo",
-                                              on_click=self._controller.handle_dettagli)
+        # self.dd_localization = ft.Dropdown(label="Localization",
+        #                               hint_text="Selezionare la Localization del gene", width=200, disabled=True)
+        #
+        # self.btn_dettagli = ft.ElevatedButton(text="Dettagli",
+        #                                       tooltip="Stampa dettagli del grafo",
+        #                                       on_click=self._controller.handle_dettagli, disabled=True)
 
         self.btn_path = ft.ElevatedButton(text="Cammino",
                                           tooltip="Trova cammino ottimo",
-                                          on_click=self._controller.handle_path)
+                                          on_click=self._controller.handle_path, disabled=True)
 
-        row1 = ft.Row([self.dd_min_ch, self.dd_max_ch, self.btn_graph, self.dd_localization,
-                       self.btn_dettagli, self.btn_path],
+        row1 = ft.Row([self.dd_min_ch, self.dd_max_ch, self.btn_graph, self.btn_path],
                       alignment=ft.MainAxisAlignment.SPACE_EVENLY)
         self._page.controls.append(row1)
 
